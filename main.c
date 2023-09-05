@@ -1,20 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-
-// typedef struct {
-//     uint8_t IDLength;
-//     uint8_t ColorMapType;
-//     uint8_t ImageType;
-//     uint16_t ColorMapStart;
-//     uint16_t ColorMapLength;
-//     uint8_t colorMapDepth;
-//     uint16_t XOrigin;
-//     uint16_t YOrigin;
-//     uint16_t Width;
-//     uint16_t Height;
-//     uint8_t BitsPerPixel;
-//     uint8_t ImageDescriptor;
-// } TGAHeader;
+#include <stdlib.h>
 
 typedef struct {
     char Format[3];
@@ -23,41 +9,54 @@ typedef struct {
     int MaxColorValue;
 } PPMHeader;
 
-int main(){
+int main() {
     char filename[100];
-
     printf("Enter PPM filename: ");
     scanf("%s", filename);
 
     FILE *file = fopen(filename, "rb");
+    
     if (!file) {
-        printf("ERROR opening the file.\n");
+        printf("ERROR! can't open this file.\n");
         return 1;
     }
 
-    uint8_t ImageType;
-    fread(&ImageType, sizeof(uint8_t), 1, file);
+    char MagN[3];
+    fread(MagN, sizeof(char), 2, file);
 
-    // if (ImageType == 1 || ImageType == 2 || ImageType == 3 || ImageType == 9 || ImageType == 10 || ImageType == 11){
-    //     TGAHeader tgaHeader;
-    //     fread(&tgaHeader, sizeof(TGAHeader), 1, file);
-
-    //     printf("Image Width: %d\n", tgaHeader.Width);
-    //     printf("Image Height: %d\n", tgaHeader.Height);
-    //     printf("Image Size: %d bytes\n", tgaHeader.Width * tgaHeader.Height * tgaHeader.BitsPerPixel / 8);
-    // }
-    if (ImageType == 'P' && fgetc(file) == '6'){
+    if (MagN[0] == 'P' && MagN[1] == '6'){
         PPMHeader ppmHeader;
         fscanf(file, "%d %d\n%d\n", &ppmHeader.Width, &ppmHeader.Height, &ppmHeader.MaxColorValue);
 
-        printf("Image Width: %d\n", ppmHeader.Width);
-        printf("Image Height: %d\n", ppmHeader.Height);
-        printf("Image Size: %d bytes\n", ppmHeader.Width * ppmHeader.Height * 3);
-    }
-    else {
-        printf("unsupported image type.\n");
+        unsigned char** PixelData;
+        PixelData = (unsigned char**)malloc(ppmHeader.Height * sizeof(unsigned char*));
+
+        for(int i = 0; i < ppmHeader.Height; i++){
+            PixelData[i] = (unsigned char*)malloc(3 * ppmHeader.Width * sizeof(unsigned char));
+        }
+
+        for (int row = 0; row < ppmHeader.Height; row++){
+            fread(PixelData[row], 1, 3 * ppmHeader.Width, file);
+        }
+
+        int PrintPixels = 5;
+        for (int i = 0; i < PrintPixels; i++){
+            printf("Pixel %d: R=%d, G=%d, B=%d\n", i + 1,
+            PixelData[i / ppmHeader.Width][3 * (i % ppmHeader.Width)],
+            PixelData[i / ppmHeader.Width][3 * (i % ppmHeader.Width) + 1],
+            PixelData[i / ppmHeader.Width][3 * (i % ppmHeader.Width) + 2]);
+        }
+
+        for (int i = 0; i < ppmHeader.Height; i++){
+            free(PixelData[i]);
+        }
+        free(PixelData);
     }
 
+    else{
+        printf("OOPS! unsupported image type.\n");
+    }
     fclose(file);
+
     return 0;
 }
