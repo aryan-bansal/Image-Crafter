@@ -33,19 +33,19 @@ The `image_crafter` executable can be run in several modes based on the number o
 - **Standard Input Mode**: Reads size from stdin and processes input until EOF.
 
   ```bash
-  ./image_crafter
+  ./image_craft
   ```
 
 - **File Input Mode**: Reads size from a specified input file.
 
   ```bash
-  ./image_crafter input_file.ipi
+  ./image_craft input_file.ipi
   ```
 
 - **File Input & Output Mode**: Reads from a specified input file and writes the output to a specified output file.
 
   ```bash
-  ./image_crafter input_file.ipi output.ppm
+  ./image_craft input_file.ipi output.ppm
   ```
 
 
