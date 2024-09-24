@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Image Crafter** is a C-based image processing tool designed to read image data in '.ipi.' format, process it using a machine model, and output the results in the PPM (Portable Pixmap) format. This project leverages a modular design, utilizing multiple header files that encapsulate functionality for layers, pixels, and the underlying machine architecture.
+**Image Crafter** is a C-based image processing tool designed to read image data in '.ipi' format, process it using a machine model, and output the results in the PPM (Portable Pixmap) format. This project leverages a modular design, utilizing multiple header files that encapsulate functionality for layers, pixels, and the underlying machine architecture.
 
 
 ## Features
